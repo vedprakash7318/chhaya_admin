@@ -1,0 +1,47 @@
+.zone-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+.p-inputtext-sm{
+    padding: 10px;
+}
+.zone-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.dialog-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 20px;
+}
+.p-button-sm{
+    padding: 10px;
+}
+
+.p-dialog-title{
+    margin: 15px;
+}
+.p-dialog-header-close-icon{
+    margin-top: 10px;
+    margin-right: 10px;
+}
+.dialog-form .p-inputtext-sm{
+    padding: 10px;
+}
+
+.dialog-form .p-button-sm{
+    padding: 20px;
+}
+
+.loader-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 150px;
+}

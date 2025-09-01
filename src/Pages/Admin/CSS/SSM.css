@@ -1,0 +1,55 @@
+/* Simple Enhanced StaffHead.css */
+.ssm-page {
+  padding: 20px;
+  /* background: #f5f7fa; */
+  min-height: 100vh;
+font-family: "Poppins", sans-serif;
+}
+
+.ssm-header {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ssm-header h2 {
+  font-size: 28px;
+  color: #2c3e50;
+  margin: 0 0 20px 0;
+  font-weight: 600;
+}
+
+.ssm-header .p-inputtext {
+  flex: 1;
+  max-width: 400px;
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.ssm-header .p-inputtext:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+  outline: none;
+}
+
+.ssm-header .p-button {
+  padding: 12px 24px;
+  background: #3498db;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 500;
+}
+
+.ssm-header .p-button:hover {
+  background: #2980b9;
+}
+
+

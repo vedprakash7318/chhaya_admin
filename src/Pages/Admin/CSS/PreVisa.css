@@ -1,0 +1,211 @@
+.pre-visa-page {
+  padding: 20px;
+  /* background: #f5f7fa; */
+  min-height: 100vh;
+  font-family: "Poppins", sans-serif;
+}
+
+.pre-visa-header {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+    display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pre-visa-header h2 {
+  font-size: 28px;
+  color: #2c3e50;
+  margin: 0 0 20px 0;
+  font-weight: 600;
+}
+
+.pre-visa-actions {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.pre-visa-actions .p-inputtext {
+  flex: 1;
+  max-width: 400px;
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.pre-visa-actions .p-inputtext:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+  outline: none;
+}
+
+.pre-visa-actions .p-button {
+  padding: 12px 24px;
+  background: #3498db;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 500;
+}
+
+.pre-visa-actions .p-button:hover {
+  background: #2980b9;
+}
+
+/* Table */
+.p-datatable {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+  background: #34495e;
+  color: white;
+  font-weight: 500;
+  padding: 16px 12px;
+  border: none;
+}
+
+.p-datatable .p-datatable-tbody > tr:hover {
+  background: #f8f9fa;
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+  padding: 16px 12px;
+  border-bottom: 1px solid #eee;
+}
+
+/* Action buttons */
+.action-icons .p-button {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  margin-right: 8px;
+}
+
+.action-icons .p-button-info {
+  background: #17a2b8;
+}
+
+.action-icons .p-button-info:hover {
+  background: #138496;
+}
+
+.action-icons .p-button-warning {
+  background: #ffc107;
+}
+
+.action-icons .p-button-warning:hover {
+  background: #e0a800;
+}
+
+.action-icons .p-button-danger {
+  background: #dc3545;
+}
+
+.action-icons .p-button-danger:hover {
+  background: #c82333;
+}
+
+/* Dialog */
+.custom-pre-visa-dialog .p-dialog {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.custom-pre-visa-dialog .p-dialog-header {
+  background: #3498db;
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  padding: 20px;
+}
+
+.custom-pre-visa-dialog .p-dialog-content {
+  padding: 30px;
+  background: white;
+}
+
+.custom-pre-visa-dialog .p-inputtext {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.custom-pre-visa-dialog .p-inputtext:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+  outline: none;
+}
+
+.custom-pre-visa-dialog input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-top: 15px;
+  background: #f8f9fa;
+}
+
+.custom-pre-visa-dialog .p-button {
+  margin-top: 20px;
+  background: #27ae60;
+  border: none;
+  border-radius: 6px;
+  padding: 12px;
+  font-weight: 500;
+}
+
+.custom-pre-visa-dialog .p-button:hover {
+  background: #229954;
+}
+
+/* Image */
+.p-image img {
+  border-radius: 50%;
+  border: 2px solid #ecf0f1;
+}
+
+/* Mobile responsive */
+@media screen and (max-width: 768px) {
+  .pre-visa-page {
+    padding: 15px;
+  }
+  
+  .pre-visa-header {
+    padding: 20px;
+  }
+  
+  .pre-visa-header h2 {
+    font-size: 24px;
+  }
+  
+  .pre-visa-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .pre-visa-actions .p-inputtext,
+  .pre-visa-actions .p-button {
+    width: 100%;
+    max-width: none;
+  }
+  
+  .action-icons .p-button {
+    width: 32px;
+    height: 32px;
+    margin-right: 5px;
+  }
+}
