@@ -11,8 +11,10 @@ import Swal from 'sweetalert2';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import 'react-toastify/dist/ReactToastify.css';
 import '../CSS/Zone.css';
+import { useNavigate } from 'react-router-dom';
 
 const Zone = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [zones, setZones] = useState([]);
   const [search, setSearch] = useState('');
   const [visible, setVisible] = useState(false);
@@ -21,13 +23,18 @@ const Zone = () => {
   const [selectedId, setSelectedId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-
+  const navigate=useNavigate()
+  useEffect(()=>{
+    if(!localStorage.getItem("adminID")){
+        navigate('/')
+    }
+  })
   const adminId = localStorage.getItem('adminID');
 
   const fetchZones = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`http://localhost:5000/api/setting/zone?search=${search}`);
+      const res = await axios.get(`${API_URL}/api/setting/zone?search=${search}`);
       setZones(res.data);
     } catch {
       toast.error('Failed to fetch zones');
@@ -54,10 +61,10 @@ const Zone = () => {
     setSaving(true);
     try {
       if (editMode) {
-        await axios.put(`http://localhost:5000/api/setting/zone/${selectedId}`, form);
+        await axios.put(`${API_URL}/api/setting/zone/${selectedId}`, form);
         toast.success('Zone updated');
       } else {
-        await axios.post(`http://localhost:5000/api/setting/zone/add`, {
+        await axios.post(`${API_URL}/api/setting/zone/add`, {
           ...form,
           zoneAddedBy: adminId,
         });
@@ -85,7 +92,7 @@ const Zone = () => {
 
     if (confirm.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:5000/api/setting/zone/${id}`);
+        await axios.delete(`${API_URL}/api/setting/zone/${id}`);
         toast.success('Zone deleted');
         fetchZones();
       } catch {

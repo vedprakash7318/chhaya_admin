@@ -6,32 +6,46 @@ import { InputText } from 'primereact/inputtext';
 import { ToastContainer, toast } from 'react-toastify';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+import { ProgressSpinner } from 'primereact/progressspinner';
 import Swal from 'sweetalert2';
 import 'react-toastify/dist/ReactToastify.css';
 import './CSS/PreVisa.css';
+import { useNavigate } from 'react-router-dom';
 
 const PreVisa = () => {
+    const API_URL = import.meta.env.VITE_API_URL;
   const [preVisas, setPreVisas] = useState([]);
   const [search, setSearch] = useState('');
   const [visible, setVisible] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // add/edit loading
+  const [deletingId, setDeletingId] = useState(null); // track deleting
+  const [fetching, setFetching] = useState(true); // table loader
   const [form, setForm] = useState({
     name: '',
     email: '',
     mobile: '',
     password: '',
   });
+    const navigate=useNavigate()
+  useEffect(()=>{
+    if(!localStorage.getItem("adminID")){
+        navigate('/')
+    }
+  })
 
   const AddedBy = localStorage.getItem('adminID');
 
   const fetchPreVisas = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/pre-visa?search=${search}`);
+      setFetching(true);
+      const res = await axios.get(`${API_URL}/api/pre-visa?search=${search}`);
       setPreVisas(res.data);
     } catch (err) {
       toast.error('Failed to fetch pre-visa records');
+    } finally {
+      setFetching(false);
     }
   };
 
@@ -61,14 +75,14 @@ const PreVisa = () => {
       setLoading(true);
 
       if (editMode) {
-        await axios.put(`http://localhost:5000/api/pre-visa/${selectedId}`, {
+        await axios.put(`${API_URL}/api/pre-visa/${selectedId}`, {
           name: form.name,
           email: form.email,
           mobile: form.mobile,
         });
         toast.success('Pre-Visa record updated successfully');
       } else {
-        await axios.post('http://localhost:5000/api/pre-visa/add', {
+        await axios.post(`${API_URL}/api/pre-visa/add`, {
           name: form.name,
           email: form.email,
           mobile: form.mobile,
@@ -99,11 +113,14 @@ const PreVisa = () => {
 
     if (confirm.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:5000/api/pre-visa/${id}`);
+        setDeletingId(id);
+        await axios.delete(`${API_URL}/api/pre-visa/${id}`);
         toast.success('Pre-Visa record deleted');
         fetchPreVisas();
       } catch (err) {
         toast.error('Delete failed');
+      } finally {
+        setDeletingId(null);
       }
     }
   };
@@ -116,8 +133,18 @@ const PreVisa = () => {
 
   const actionTemplate = (rowData) => (
     <div className="action-icons" style={{ display: 'flex', gap: '0.5rem' }}>
-      <Button icon="pi pi-pencil" className="p-button-rounded p-button-warning" onClick={() => openEditDialog(rowData)} />
-      <Button icon="pi pi-trash" className="p-button-rounded p-button-danger" onClick={() => handleDelete(rowData._id)} />
+      <Button
+        icon="pi pi-pencil"
+        className="p-button-rounded p-button-warning"
+        onClick={() => openEditDialog(rowData)}
+        disabled={deletingId === rowData._id}
+      />
+      <Button
+        icon={deletingId === rowData._id ? 'pi pi-spin pi-spinner' : 'pi pi-trash'}
+        className="p-button-rounded p-button-danger"
+        onClick={() => handleDelete(rowData._id)}
+        disabled={deletingId === rowData._id}
+      />
     </div>
   );
 
@@ -143,26 +170,33 @@ const PreVisa = () => {
         </div>
       </div>
 
-      <DataTable
-        value={preVisas}
-        paginator
-        rows={10}
-        className="p-datatable-striped"
-        responsiveLayout="scroll"
-      >
-        <Column header="Sr. No." body={(_, { rowIndex }) => rowIndex + 1} />
-        <Column field="name" header="Name" />
-        <Column field="email" header="Email" />
-        <Column field="password" header="Password" />
-        <Column field="mobile" header="Mobile" />
-        <Column field="addedBy.username" header="Added By" />
-        <Column
-          field="createdAt"
-          header="Created"
-          body={(row) => new Date(row.createdAt).toLocaleString()}
-        />
-        <Column header="Actions" body={actionTemplate} style={{ textAlign: 'center' }} />
-      </DataTable>
+      {fetching ? (
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}>
+          <ProgressSpinner />
+        </div>
+      ) : (
+        <DataTable
+          value={preVisas}
+          paginator
+          rows={10}
+          className="p-datatable-striped"
+          responsiveLayout="scroll"
+          emptyMessage="No Pre-Visa Officers found."
+        >
+          <Column header="Sr. No." body={(_, { rowIndex }) => rowIndex + 1} />
+          <Column field="name" header="Name" />
+          <Column field="email" header="Email" />
+          <Column field="password" header="Password" />
+          <Column field="mobile" header="Mobile" />
+          <Column field="addedBy.username" header="Added By" />
+          <Column
+            field="createdAt"
+            header="Created"
+            body={(row) => new Date(row.createdAt).toLocaleString()}
+          />
+          <Column header="Actions" body={actionTemplate} style={{ textAlign: 'center' }} />
+        </DataTable>
+      )}
 
       <Dialog
         header={editMode ? 'Edit Pre-Visa' : 'Add Pre-Visa'}

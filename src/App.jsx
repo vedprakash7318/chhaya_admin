@@ -9,6 +9,9 @@ import Pre from './Pages/Admin/Pre-Visa';
 import Mainpage from './Pages/Admin/Mainpage';
 import FinalVisaOfficer from './Pages/Admin/FinalVisaOfficer';
 import InterviewManager from './Pages/Admin/InterviewManager';
+import CountryPage from './Pages/Admin/CountryPage';
+import CallingTeam from './Pages/Admin/CallingTeam';
+import AdminProfile from './Pages/Admin/AdminProfile';
 
 function App() {
   return (
@@ -29,6 +32,22 @@ function App() {
             <SMM />
           </Dashboard>
         } />
+
+        {/* Protected Admin Routes */}
+        <Route path="/profile" element={
+          <Dashboard>
+            <AdminProfile />
+          </Dashboard>
+        } />
+
+        {/* Protected Admin Routes */}
+        <Route path="/calling-team" element={
+          <Dashboard>
+            <CallingTeam />
+          </Dashboard>
+        } />
+
+
         <Route path="/staffHead" element={
           <Dashboard>
             <StaffHead />
@@ -61,6 +80,12 @@ function App() {
         <Route path="/settings/zone" element={
           <Dashboard>
             <Zone />
+          </Dashboard>
+        } />
+
+        <Route path="/settings/country" element={
+          <Dashboard>
+            <CountryPage/>
           </Dashboard>
         } />
 

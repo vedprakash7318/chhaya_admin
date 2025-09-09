@@ -6,6 +6,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+    const API_URL = import.meta.env.VITE_API_URL;
   const [form, setForm] = useState({ username: '', password: '' });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate()
@@ -19,12 +20,13 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/admin/login', form);
+      const response = await axios.post(`${API_URL}/api/admin/login`, form);
 
       if (response.data && response.data.token) {
-        localStorage.setItem('adminToken', response.data);
+        localStorage.setItem('adminToken',JSON.stringify( response.data));
         const adminID = response.data.admin._id;
         localStorage.setItem('adminID', adminID);
+
 
 
         toast.success('Login successful!');

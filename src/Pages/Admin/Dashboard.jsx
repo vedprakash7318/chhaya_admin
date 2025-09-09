@@ -3,8 +3,10 @@ import React, { useState } from 'react';
 import Sidebar from '../../Components/Sidebar';
 import Navbar from '../../Components/header';
 import './CSS/Dashboard.css';
+import { useNavigate } from 'react-router-dom';
 
 function Dashboard({ children }) {
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // collapsed by default
 
   return (

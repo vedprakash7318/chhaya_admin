@@ -7,17 +7,21 @@ import { ToastContainer, toast } from 'react-toastify';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Image } from 'primereact/image';
+import { ProgressSpinner } from 'primereact/progressspinner';
 import Swal from 'sweetalert2';
 import 'react-toastify/dist/ReactToastify.css';
 import './CSS/StaffHead.css';
+import { useNavigate } from 'react-router-dom';
 
 const StaffHead = () => {
+    const API_URL = import.meta.env.VITE_API_URL;
   const [staffHeads, setStaffHeads] = useState([]);
   const [search, setSearch] = useState('');
   const [visible, setVisible] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // form submit
+  const [pageLoading, setPageLoading] = useState(false); // page/data loading
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -28,12 +32,21 @@ const StaffHead = () => {
 
   const AddedBy = localStorage.getItem('adminID');
 
+    const navigate=useNavigate()
+  useEffect(()=>{
+    if(!localStorage.getItem("adminID")){
+        navigate('/')
+    }
+  })
   const fetchStaffHeads = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/staff-heads?search=${search}`);
+      setPageLoading(true);
+      const res = await axios.get(`${API_URL}/api/staff-heads?search=${search}`);
       setStaffHeads(res.data);
     } catch (err) {
       toast.error('Failed to fetch staff heads');
+    } finally {
+      setPageLoading(false);
     }
   };
 
@@ -68,7 +81,7 @@ const StaffHead = () => {
       setLoading(true);
 
       if (editMode) {
-        await axios.put(`http://localhost:5000/api/staff-heads/${selectedId}`, {
+        await axios.put(`${API_URL}/api/staff-heads/${selectedId}`, {
           name: form.name,
           email: form.email,
           mobile: form.mobile,
@@ -79,12 +92,12 @@ const StaffHead = () => {
         formData.append('name', form.name);
         formData.append('email', form.email);
         formData.append('mobile', form.mobile);
-        formData.append('addedBy', AddedBy); // ✅ Critical fix
+        formData.append('addedBy', AddedBy);
 
         if (form.password) formData.append('password', form.password);
         if (form.photo) formData.append('photo', form.photo);
 
-        await axios.post('http://localhost:5000/api/staff-heads/add', formData);
+        await axios.post(`${API_URL}/api/staff-heads/add`, formData);
         toast.success('Staff head added successfully');
       }
 
@@ -110,11 +123,14 @@ const StaffHead = () => {
 
     if (confirm.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:5000/api/staff-heads/${id}`);
+        setPageLoading(true);
+        await axios.delete(`${API_URL}/api/staff-heads/${id}`);
         toast.success('Staff head deleted');
         fetchStaffHeads();
       } catch (err) {
         toast.error('Delete failed');
+      } finally {
+        setPageLoading(false);
       }
     }
   };
@@ -127,7 +143,6 @@ const StaffHead = () => {
 
   const actionTemplate = (rowData) => (
     <div className="action-icons" style={{ display: 'flex', gap: '0.5rem' }}>
-      {/* <Button icon="pi pi-eye" className="p-button-rounded p-button-info" /> */}
       <Button icon="pi pi-pencil" className="p-button-rounded p-button-warning" onClick={() => openEditDialog(rowData)} />
       <Button icon="pi pi-trash" className="p-button-rounded p-button-danger" onClick={() => handleDelete(rowData._id)} />
     </div>
@@ -140,6 +155,14 @@ const StaffHead = () => {
   return (
     <div className="staff-head-page">
       <ToastContainer />
+
+      {/* Full-page loader */}
+      {pageLoading && (
+        <div className="loader-overlay">
+          <ProgressSpinner />
+        </div>
+      )}
+
       <div className="staff-head-header">
         <h2>Staff Heads</h2>
         <div className="staff-head-actions">
@@ -165,6 +188,7 @@ const StaffHead = () => {
         rows={10}
         className="p-datatable-striped"
         responsiveLayout="scroll"
+        emptyMessage={pageLoading ? 'Loading...' : 'No records found'}
       >
         <Column header="Sr. No." body={(_, { rowIndex }) => rowIndex + 1} />
         <Column header="Photo" body={photoTemplate} />
@@ -188,45 +212,51 @@ const StaffHead = () => {
         onHide={() => setVisible(false)}
         className="custom-staff-dialog"
       >
-        <div className="p-fluid">
-          <InputText
-            placeholder="Name"
-            value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
-          />
-          <InputText
-            placeholder="Email"
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-          />
-          <InputText
-            placeholder="Mobile"
-            value={form.mobile}
-            onChange={(e) => setForm({ ...form, mobile: e.target.value })}
-          />
-          <InputText
-            placeholder="Password"
-            value={form.password}
-            onChange={(e) => setForm({ ...form, password: e.target.value })}
-          />
-
-          {!editMode && (
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="p-mt-2"
+        {loading ? (
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}>
+            <ProgressSpinner />
+          </div>
+        ) : (
+          <div className="p-fluid">
+            <InputText
+              placeholder="Name"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
             />
-          )}
+            <InputText
+              placeholder="Email"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+            />
+            <InputText
+              placeholder="Mobile"
+              value={form.mobile}
+              onChange={(e) => setForm({ ...form, mobile: e.target.value })}
+            />
+            <InputText
+              placeholder="Password"
+              value={form.password}
+              onChange={(e) => setForm({ ...form, password: e.target.value })}
+            />
 
-          <Button
-            label={loading ? 'Saving...' : editMode ? 'Update' : 'Submit'}
-            icon={loading ? 'pi pi-spin pi-spinner' : 'pi pi-check'}
-            onClick={handleAddOrEdit}
-            disabled={loading}
-            className="p-mt-3"
-          />
-        </div>
+            {!editMode && (
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="p-mt-2"
+              />
+            )}
+
+            <Button
+              label={editMode ? 'Update' : 'Submit'}
+              icon="pi pi-check"
+              onClick={handleAddOrEdit}
+              disabled={loading}
+              className="p-mt-3"
+            />
+          </div>
+        )}
       </Dialog>
     </div>
   );

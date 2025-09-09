@@ -13,8 +13,10 @@
   overflow-x: hidden;
   position: fixed;
   margin-top: 60px;
+  z-index: 10000;
 }
 .admin-sidebar.open {
+  overflow-y: auto;
   width: 250px;
 }
 
@@ -38,18 +40,29 @@
   margin-left: 10px;
 }
 
+
+
 .admin-sidebar li {
+  width: 93%;
   display: flex;
   align-items: center;
   padding: 12px 20px;
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
+  margin-top: 10px;
 }
 
 .admin-sidebar li:hover {
   background: #D1D6E0;
 }
+
+.admin-sidebar ul li.active,
+.admin-sidebar .dropdown-item.active {
+  background-color: #D1D6E0; 
+  border-radius: 8px;
+}
+
 
 .admin-icon {
   font-size: 18px;
@@ -105,6 +118,9 @@
 
   .admin-sidebar.open {
     transform: translateX(0%);
+    overflow: auto;
     width: 100%;
   }
 }
+
+

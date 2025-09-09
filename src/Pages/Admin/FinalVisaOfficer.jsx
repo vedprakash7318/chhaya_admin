@@ -6,32 +6,45 @@ import { InputText } from 'primereact/inputtext';
 import { ToastContainer, toast } from 'react-toastify';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+import { ProgressSpinner } from 'primereact/progressspinner';
 import Swal from 'sweetalert2';
 import 'react-toastify/dist/ReactToastify.css';
 import '../Admin/CSS/PreVisa.css'
+import { useNavigate } from 'react-router-dom';
 
 const FinalVisaOfficer = () => {
+    const API_URL = import.meta.env.VITE_API_URL;
   const [preVisas, setPreVisas] = useState([]);
   const [search, setSearch] = useState('');
   const [visible, setVisible] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // for form save
+  const [fetching, setFetching] = useState(true); // for initial data load
   const [form, setForm] = useState({
     name: '',
     email: '',
     mobile: '',
     password: '',
   });
+    const navigate=useNavigate()
+  useEffect(()=>{
+    if(!localStorage.getItem("adminID")){
+        navigate('/')
+    }
+  })
 
   const AddedBy = localStorage.getItem('adminID');
 
   const fetchPreVisas = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/final-visa?search=${search}`);
+      setFetching(true);
+      const res = await axios.get(`${API_URL}/api/final-visa?search=${search}`);
       setPreVisas(res.data);
     } catch (err) {
-      toast.error('Failed to fetch pre-visa records');
+      toast.error('Failed to fetch final-visa records');
+    } finally {
+      setFetching(false);
     }
   };
 
@@ -61,21 +74,21 @@ const FinalVisaOfficer = () => {
       setLoading(true);
 
       if (editMode) {
-        await axios.put(`http://localhost:5000/api/final-visa/${selectedId}`, {
+        await axios.put(`${API_URL}/api/final-visa/${selectedId}`, {
           name: form.name,
           email: form.email,
           mobile: form.mobile,
         });
-        toast.success('Pre-Visa record updated successfully');
+        toast.success('Final-Visa Officer updated successfully');
       } else {
-        await axios.post('http://localhost:5000/api/final-visa/add', {
+        await axios.post(`${API_URL}/api/final-visa/add`, {
           name: form.name,
           email: form.email,
           mobile: form.mobile,
           password: form.password || undefined,
           addedBy: AddedBy,
         });
-        toast.success('Pre-Visa record added successfully');
+        toast.success('Final-Visa Officer added successfully');
       }
 
       fetchPreVisas();
@@ -91,7 +104,7 @@ const FinalVisaOfficer = () => {
   const handleDelete = async (id) => {
     const confirm = await Swal.fire({
       title: 'Are you sure?',
-      text: 'This will mark the pre-visa record as deleted!',
+      text: 'This will mark the officer as deleted!',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Yes, delete it!',
@@ -99,8 +112,8 @@ const FinalVisaOfficer = () => {
 
     if (confirm.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:5000/api/final-visa/${id}`);
-        toast.success('Pre-Visa record deleted');
+        await axios.delete(`${API_URL}/api/final-visa/${id}`);
+        toast.success('Final-Visa Officer deleted');
         fetchPreVisas();
       } catch (err) {
         toast.error('Delete failed');
@@ -143,26 +156,33 @@ const FinalVisaOfficer = () => {
         </div>
       </div>
 
-      <DataTable
-        value={preVisas}
-        paginator
-        rows={10}
-        className="p-datatable-striped"
-        responsiveLayout="scroll"
-      >
-        <Column header="Sr. No." body={(_, { rowIndex }) => rowIndex + 1} />
-        <Column field="name" header="Name" />
-        <Column field="email" header="Email" />
-        <Column field="password" header="Password" />
-        <Column field="mobile" header="Mobile" />
-        <Column field="addedBy.username" header="Added By" />
-        <Column
-          field="createdAt"
-          header="Created"
-          body={(row) => new Date(row.createdAt).toLocaleString()}
-        />
-        <Column header="Actions" body={actionTemplate} style={{ textAlign: 'center' }} />
-      </DataTable>
+      {fetching ? (
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}>
+          <ProgressSpinner />
+        </div>
+      ) : (
+        <DataTable
+          value={preVisas}
+          paginator
+          rows={10}
+          className="p-datatable-striped"
+          responsiveLayout="scroll"
+          emptyMessage="No Final-Visa Officers found."
+        >
+          <Column header="Sr. No." body={(_, { rowIndex }) => rowIndex + 1} />
+          <Column field="name" header="Name" />
+          <Column field="email" header="Email" />
+          <Column field="password" header="Password" />
+          <Column field="mobile" header="Mobile" />
+          <Column field="addedBy.username" header="Added By" />
+          <Column
+            field="createdAt"
+            header="Created"
+            body={(row) => new Date(row.createdAt).toLocaleString()}
+          />
+          <Column header="Actions" body={actionTemplate} style={{ textAlign: 'center' }} />
+        </DataTable>
+      )}
 
       <Dialog
         header={editMode ? 'Edit Final-Visa-Officer' : 'Add Final-Visa-Officer'}
@@ -178,6 +198,7 @@ const FinalVisaOfficer = () => {
             onChange={(e) => setForm({ ...form, name: e.target.value })}
           />
           <InputText
+          type='email'
             placeholder="Email"
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}

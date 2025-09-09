@@ -1,11 +1,25 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { FaSearch, FaBell, FaEnvelope, FaUserCircle, FaBars } from 'react-icons/fa';
-import './StyleCss/header.css';
-import chhayaLogo from "../../public/logo.jpg"
+import React, { useState, useRef, useEffect } from "react";
+import { FaUserCircle, FaBars } from "react-icons/fa";
+import "./StyleCss/header.css";
+import chhayaLogo from "../../public/logo.jpg";
+import { useNavigate } from "react-router-dom";
 
 const Header = ({ toggleSidebar }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const navigate = useNavigate();
   const profileRef = useRef();
+
+  const handleProfile = () => {
+    navigate("/profile");
+    setDropdownOpen(false);
+  };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/");
+    setDropdownOpen(false);
+  };
+
   // Close dropdown if click outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -21,25 +35,17 @@ const Header = ({ toggleSidebar }) => {
     <div className="navbar">
       <div className="navbar-left">
         <div className="admin-logo">
-          <img src={chhayaLogo} alt="chaya"  style={{height:"30px", width:"100%"}}/>
+          <img src={chhayaLogo} alt="chhaya" style={{ height: "30px", width: "100%" }} />
         </div>
         <button className="menu-toggle" onClick={toggleSidebar}>
           <FaBars />
         </button>
         <div className="search-bar">
-          <span className='Heading'>Welcome Back Admin !!</span>
+          <span className="Heading">Welcome Back Admin !!</span>
         </div>
       </div>
-      <div className="navbar-right">
-        {/* <div className="nav-icon">
-          <FaBell />
-          <span className="notification-badge">3</span>
-        </div>
-        <div className="nav-icon">
-          <FaEnvelope />
-          <span className="notification-badge">5</span>
-        </div> */}
 
+      <div className="navbar-right">
         <div
           className="user-profile"
           ref={profileRef}
@@ -49,8 +55,12 @@ const Header = ({ toggleSidebar }) => {
           <span className="username">Admin</span>
           {dropdownOpen && (
             <div className="profile-dropdown">
-            <div className="dropdown-item">👤 Profile</div>
-              <div className="dropdown-item">🚪 Logout</div>
+              <div className="dropdown-item" onClick={handleProfile}>
+                👤 Profile
+              </div>
+              <div className="dropdown-item" onClick={handleLogout}>
+                🚪 Logout
+              </div>
             </div>
           )}
         </div>
