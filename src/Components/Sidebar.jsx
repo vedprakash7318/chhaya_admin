@@ -31,7 +31,7 @@ export default function Sidebar({ isOpen }) {
     {
       icon: <FiSettings />, label: 'Settings', dropdown: [
         { label: 'Zone', icon: <RiTimeZoneFill />, path: '/settings/zone' },
-        { label: 'Country', icon: <FaGlobeAsia />, path: '/settings/country' },
+        // { label: 'Country', icon: <FaGlobeAsia />, path: '/settings/country' },
       ]
     },
   ];
