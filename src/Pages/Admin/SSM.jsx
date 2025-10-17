@@ -23,9 +23,10 @@ const SSM = () => {
   const [visible, setVisible] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
-  const [loading, setLoading] = useState(false);      // for add/edit
-  const [pageLoading, setPageLoading] = useState(false); // ✅ for table data
-  const [form, setForm] = useState({ name: '', email: '', mobile: '', password: '', addedBy: '' });
+  const [loading, setLoading] = useState(false);     
+  const [pageLoading, setPageLoading] = useState(false);
+  const [adminId,setadminId]=useState(null)
+  const [form, setForm] = useState({ name: '', email: '', mobile: '', password: '', addedBy: adminId });
 
   const token = JSON.parse(localStorage.getItem('adminToken'))?.token;
     const navigate=useNavigate()
@@ -37,6 +38,9 @@ const SSM = () => {
 
   useEffect(() => {
     const adminID = localStorage.getItem('adminID');
+    // console.log(adminID);
+    setadminId(adminID)
+    
     setForm((prev) => ({ ...prev, addedBy: adminID }));
   }, []);
 
@@ -79,6 +83,7 @@ const SSM = () => {
         });
         toast.success('SMM updated successfully');
       } else {
+        form.addedBy=adminId
         await axios.post(`${API_URL}/api/smm/add`, form, {
           headers: {
             Authorization: `Bearer ${token}`,
